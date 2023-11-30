@@ -4,8 +4,12 @@ from main import parseData, URL
 
 NAMES = ['Артикул', 'Название', 'Новая цена', 'Старая цена', 'Бренд', 'Ссылка']
 
-def writer(parser):  
+def writer(parser):
     path = os.path.join(os.getcwd(), 'data.xlsx')
+
+    if os.path.isfile(path):
+        os.remove(path)
+
     book = xlsxwriter.Workbook(path)
     page = book.add_worksheet("Product")
     bold = book.add_format({'bold': True})
