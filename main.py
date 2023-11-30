@@ -17,12 +17,16 @@ PRICE_WRAPPER_NEW_SELECTOR = 'product-unit-prices__actual-wrapper'
 PRICE_SELECTOR = 'product-price__sum-rubles'
 
 headers = {
-    'user-agent': 'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Mobile Safari/537.36'
+    "User-Agent": 
+    "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)"
 }
+
+jar = requests.cookies.RequestsCookieJar()
+jar.set('UserSettings', 'SelectedStore=ddfaed10-5e08-458f-9967-baa9b63bd52e', domain='.metro-cc.ru', path='/')
 
 def parseData(url: str) -> list[dict[str, str]]:
     print('Parse data started')
-    html_text = requests.get(url).text
+    html_text = requests.get(url, headers=headers, cookies=jar).text
     soup = BeautifulSoup(html_text, 'lxml')
 
     products_count_text = soup.select('.heading-products-count')[0]
@@ -38,7 +42,7 @@ def parseData(url: str) -> list[dict[str, str]]:
 
 
 def getPageData(url: str, page: int) -> BeautifulSoup:
-    html_text = requests.get(url + '?page=' + str(page)).text
+    html_text = requests.get(url + '?page=' + str(page), headers=headers, cookies=jar).text
     return BeautifulSoup(html_text, 'lxml')
 
 
@@ -55,7 +59,7 @@ def parseProductsInfo(soupEx: BeautifulSoup) -> list[dict[str, str]]:
         product_link = PRODUCT_URL + product.find('a', class_ = LINK_SELECTOR).get('href')
         
 
-        prod_info = requests.get(product_link).text
+        prod_info = requests.get(product_link, headers=headers).text
         soup = BeautifulSoup(prod_info, 'lxml')
 
         product_id_container = soup.select(ARTICLE_SELECTOR)
